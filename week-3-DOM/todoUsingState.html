@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Application</title>
+    <style>
+        .container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+ul.todoList {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+    font-size: 16px;
+    font-family: monospace;
+    margin-bottom: 15px;
+}
+
+button.removeTodo {
+    padding: 3px 10px;
+    background: orangered;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+button#addTodo {
+    padding: 10px 20px;
+    background: #007f4f;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+input#input {
+    padding: 8px 10px;
+    border: 1px solid #a9b2b6;
+    border-radius: 5px;
+    font-size: 16px;
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>My Todo App</h1>
+    <ul class="todoList">
+
+    </ul>
+    <input type="text" name="input todo" id="input">
+    <button id="addTodo">Add todo</button>
+
+</div>
+    <script>
+        let toDos = []
+        function addTodo() {
+            toDos.push({
+                title: document.querySelector("#input").value
+            })
+            render()
+        }
+
+        // function deleteTodo(e){
+        //    if (e.target && e.target.classList.contains("removeTodo")) {
+        //     e.target.parentElement.parentElement.removeChild(e.target.parentElement)
+        //    }
+        // }
+        function deleteTodo(index){
+               toDos.splice(index, 1)
+               render()
+        }
+
+        
+
+        function createTodoComp(elem, index) {
+            let liElem =  document.createElement("li")
+            let removeBtn = document.createElement("button")
+            removeBtn.setAttribute("class", "removeTodo")
+            removeBtn.setAttribute("onclick", `deleteTodo(${index})`)
+            removeBtn.innerHTML = "Remove"
+                liElem.innerHTML = elem.title
+            liElem.appendChild(removeBtn)
+           return liElem
+        }
+
+        function render() {
+            document.querySelector(".todoList").innerHTML = ""
+            toDos.forEach((elem, i)=>{
+                let todoElem = createTodoComp(elem, i)
+                document.querySelector(".todoList").appendChild(todoElem)
+            })
+            
+        }
+
+        document.querySelector("#addTodo").addEventListener("click", addTodo)
+        // document.addEventListener("click", deleteTodo)
+    </script>
+</body>
+</html>

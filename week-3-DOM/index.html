@@ -35,8 +35,6 @@
 <body>
     <h1>Todo list</h1>
     <div class="toDoTaskList">
-        <h4>1. Take class</h4>
-        <h4>2. Go out to eat</h4>
     </div>
     <div>
         <input type="text"></input>
@@ -48,18 +46,22 @@
         let todoList = document.querySelector(".toDoTaskList")
         btn.addEventListener("click", () => {
             const uesrInput = input.value
-            let h4 = document.createElement("h4")
-            h4.innerHTML = uesrInput + "<button class='removeBtn'> Remove </button>"
-            todoList.append(h4)
+            if (uesrInput.trim() !== "") {
+                let h4 = document.createElement("h4")
+                let removeBtn =  document.createElement("button")
+                removeBtn.innerHTML = "Remove"
+                removeBtn.setAttribute("class", "removeBtn")
+                h4.innerHTML = uesrInput 
+                h4.appendChild(removeBtn)
+                todoList.append(h4)
+                input.value = ""
+                input.focus()
+            }
         })
-
-        document.querySelectorAll(".toDoTaskList h4").forEach(element => {
-            element.innerHTML += "<button class='removeBtn'> Remove </button>"
-        });
 
         document.addEventListener("click", (e) => {
             if (e.target && e.target.classList.contains("removeBtn")) {
-                e.target.parentElement.parentElement.removeChild(e.target.parentElement)
+                e.target.parentElement.remove()
             }
 
         })
