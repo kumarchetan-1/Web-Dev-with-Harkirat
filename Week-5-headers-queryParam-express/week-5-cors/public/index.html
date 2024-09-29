@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Security Feature Testing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js" integrity="sha512-DdX/YwF5e41Ok+AI81HI8f5/5UsoxCVT9GKYZRIzpLxb8Twz4ZwPPX+jQMwMhNQ9b5+zDEefc+dcvQoPWGNZ3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <h1>CORS Security Feature Testing</h1>
+    <h2>Sum of two numbers</h2>
+    <input type="number" name="first-num" id="first-num" placeholder="First number">
+    <input type="number" name="second-num" id="second-num" placeholder="Second number">
+    <button onclick="hitYourBackend()" id="getSum">Get the sum</button>
+    
+    
+    
+    
+    <script>
+       async function hitYourBackend() {
+            const a = document.getElementById("first-num").value
+            const b = document.getElementById("second-num").value
+           
+            const response = await axios.post("http://localhost:3000/sum", {
+                a: a,
+                b: b
+            })
+            console.log(response.data)
+        }
+    </script>
+</body>
+</html>
