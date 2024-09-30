@@ -66,7 +66,7 @@ app.post("/signin", (req, res)=>{
         })
         console.log(users)
     }else{
-        res.status(403).send({
+        res.status(401).send({  // 401 => unauthorized, 403=> forbidden(authenticated but don't have permisson to access resources)
             message: "Invalid username or password"
         })
     }
