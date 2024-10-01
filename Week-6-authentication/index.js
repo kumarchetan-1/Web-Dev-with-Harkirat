@@ -1,30 +1,23 @@
 const express = require("express")
-const app = express()
 const jwt = require("jsonwebtoken")
-const JWT_SECRET = "ChetanInLoveWithCoding"
+const app = express()
+const JWT_SECRET  = "itIsNoLongerSecret"
+
 app.use(express.json())
 
-const users = []
+let users = []
 
-// to return a 32 bit long return as token
-// function generateToken() {
-//     let options = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-//     let token = ""
-
-//     for (let i = 0; i < 32; i++) {
-//         token += options[Math.floor(Math.random() * options.length)];
-//     }
-//     return token
-// }
+app.get("/", (req, res)=>{
+    res.sendFile(__dirname+"/public/index.html")
+})
 
 app.post("/signup", (req, res)=>{
-    // will do input validations using zod in upcoming weeks
     const username = req.body.username
     const password = req.body.password
-
-    if (users.find((user)=> user.username === username)) {
-        res.json({
-            message: "you are already signed up"
+ 
+    if (users.find((user)=> user.username === username && user.password === password)) {
+        res.send({
+            message: "user already exist in the database"
         })
         return
     }
@@ -32,70 +25,61 @@ app.post("/signup", (req, res)=>{
     users.push({
         username: username,
         password: password
+    }) 
+
+    res.send({
+        message: "user added sucessfully"
     })
-
-    res.json({
-        message: "You are signed up!"
-    })
-
-    console.log(users)
-})
-
+})   
+ 
 app.post("/signin", (req, res)=>{
     const username = req.body.username
     const password = req.body.password
 
-    // const user = users.find((user)=> (user.username === username && user.password === password))
-    // Or we can use this approach instead of find method of array
-   let user = null
-   for (let i = 0; i < users.length; i++) {
-    if (users[i].username === username && users[i].password === password) {
-        user = users[i]
-    }
-   }
+    const foundUser =  users.find((user)=> user.username === username && user.password === password)
 
-    if (user) {
-        // const token = generateToken()
-        const token = jwt.sign({
-            username: user.username
-        }, JWT_SECRET)
-
-        // user.token = token
-        res.send({
-            token
-        })
+    if (foundUser) {
+        const token = jwt.sign({ username: foundUser.username }, JWT_SECRET)
+        res.send({authorization: token})
         console.log(users)
-    }else{
-        res.status(401).send({  // 401 => unauthorized, 403=> forbidden(authenticated but don't have permisson to access resources)
-            message: "Invalid username or password"
+    } else{
+        res.status(401).send({
+            message: "Invalid credentials!"
         })
     }
-
-    console.log(users)
 })
 
-app.get("/me", (req, res)=>{
-    const yourToken = req.headers.authorization
-    let decodedInfo = jwt.verify(yourToken, JWT_SECRET) // returns {username: "chetankumar.npr@gmail.com"}
-    let username = decodedInfo.username
+function auth(req, res, next) {
+    const token = req.headers.authorization
+    const decodedData = jwt.verify(token, JWT_SECRET)
 
-    let foundUser = null
-   for (let i = 0; i < users.length; i++) {
-    if (users[i].username === username) {
-        foundUser = users[i]
+    if (decodedData.username) {
+        req.username = decodedData.username
+       next()
+    } else{
+        res.json({
+            message: "You are not logged in!"
+        })
     }
-   }
+}
 
-   if (foundUser) {
-    res.send({
-        username : foundUser.username,
-        password : foundUser.password
-    })
-   } else{
-    res.send({
-        message: "Invalid token"
-    })
-   }
+app.get("/me", auth, (req, res)=>{
+     const username =  req.username
+     const foundUser = users.find(user => user.username === username)
+
+     if (foundUser) {
+        res.send({
+            username: foundUser.username,
+            password: foundUser.password
+        })
+        console.log("details shown")
+     } else{
+        res.send({
+            message: "Invalid authorization token!"
+        })
+     }
+
 })
+ 
 
-app.listen(3000, ()=> console.log("Server listening on port 3000"))
+app.listen(3000, ()=> console.log("Server is running on port 3000"))
