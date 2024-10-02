@@ -5,11 +5,11 @@ const JWT_SECRET = "somethingsomething"
 const app = express()
 
 const emailSchema = zod.string().email()
-const passwordSchema = zod.string.min(6)
+const passwordSchema = zod.string().min(6)
 
 function signJWT(username, password) {
     const usernameResponse = emailSchema.safeParse(username)
-    const passwordResponse = emailSchema.safeParse(password)
+    const passwordResponse = passwordSchema.safeParse(password)
 
     if (usernameResponse.success && passwordResponse.success) {
         return jwt.sign({
