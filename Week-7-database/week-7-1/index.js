@@ -1,7 +1,7 @@
 const express = require("express")
 const jwt = require("jsonwebtoken")
 const { UserModel, TodoModel } = require("./db")
-const JWT_SECRET = "noL223ongerASecret"
+const JWT_SECRET = ""
 
 const app = express()       
 app.use(express.json())
