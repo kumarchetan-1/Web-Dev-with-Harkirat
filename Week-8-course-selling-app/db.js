@@ -12,11 +12,10 @@ const Schema = mongoose.Schema
 const ObjectId = mongoose.ObjectId
 
 const UserSchema = new Schema({
-    name: String,
     email: { type: String, unique: true},
     password: String,
     firstName: String,
-    lastname: String
+    lastName: String
 }, { timestamps: true } )
 
 const AdminSchema = new Schema({
@@ -24,14 +23,14 @@ const AdminSchema = new Schema({
     email: { type: String, unique: true},
     password: String,
     firstName: String,
-    lastname: String
+    lastName: String
 }, { timestamps: true } )
 
 const CourseSchema = new Schema({
     title: String,
     description: String,
     price: Number,
-    image: String,
+    imageUrl: String,
     creatorId: { type: ObjectId, ref: "admin"}
 }, { timestamps: true } )
 

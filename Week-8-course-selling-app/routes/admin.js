@@ -1,12 +1,18 @@
 
-const express = require("express")
 const { Router } = require("express")
 const { z, string } = require("zod")
-const { adminModel } = require("../db")
-const adminRouter = Router()
+const jwt = require("jsonwebtoken")
+const bcrypt = require("bcrypt")
+const { adminModel, courseModel } = require("../db")
+const { adminMiddleware } = require("../middlewares/admin")
+const { ADMIN_JWT_SECRET } = require("../config")
 
-adminRouter.use(express.json())
-adminRouter.post("/signup", (req, res) => {
+const adminRouter = Router()
+// zod, bcrypt, jsonwebtoken
+
+adminRouter.post("/signup", async (req, res) => {
+    const { email, password, firstName, lastName } = req.body
+
     const requiredBody = z.object({
         email: z.string().email(),
         password: z
@@ -18,8 +24,8 @@ adminRouter.post("/signup", (req, res) => {
             .regex(/\d/, { message: "Password must have atleast one digit " })
             .regex(/[.',{}@!$#%^*()-+=_|]/, { message: "Password must have atleast one special character from these [.',{}@!$#%^*()-+=_|]" })
             .regex(/^\S*$/, { message: "must not have any spaces in it." }),
-        name: z.string().min(1).max(100)
-
+        firstName: z.string().min(1).max(30),
+        lastName: z.string().max(30)
     })
 
     const { success, data, error } = requiredBody.safeParse(req.body)
@@ -31,59 +37,127 @@ adminRouter.post("/signup", (req, res) => {
         })
         return
     }
-    
-    const { username, password } = req.body
 
-    
-
-    res.send({
-        message: "Admin Signed up successfully"
-    })
+    try {
+        const hashedPassword = await bcrypt.hash(password, 5)
+        await adminModel.create({
+            email,
+            password: hashedPassword,
+            firstName,
+            lastName
+        })
+        res.send({
+            message: "Signed up successfully!"
+        })
+    } catch (error) {
+        res.send({
+            message: "Error in signing up",
+            error: error
+        })
+    }
 })
 
 
-adminRouter.post("/login", (req, res) => {
+adminRouter.post("/login", async (req, res) => {
+    const { email, password } = req.body
+    const admin = await adminModel.findOne({ email })
+    // console.log(admin);
 
+    if (!admin) {
+        res.send({
+            message: "User not found in our database"
+        })
+        return
+    }
 
-    res.send({
-        message: "Admin logged in successfully"
-    })
+    try {
+        const isCorrectPassword = await bcrypt.compare(password, admin.password)
+
+        if (isCorrectPassword) {
+            const token = jwt.sign({
+                id: admin._id.toString()
+            }, ADMIN_JWT_SECRET)
+            res.send({
+                token: token
+            })
+        } else {
+            res.status(401).send({
+                message: "Incorrect credentials"
+            })
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            error
+        })
+    }
 })
 
 
-adminRouter.post("/course", (req, res) => {
+adminRouter.post("/course", adminMiddleware, async (req, res) => {
+    const creatorId = req.userId
+    const { title, description, price, imageUrl } = req.body
 
-
-    res.send({
-        message: "Admin created a course successfully"
-    })
+    try {
+       const course =  await courseModel.create({
+            title, description, imageUrl, price, creatorId
+        })
+        // console.log(creatorId)
+        res.send({
+            message: "Course created successfully",
+            courseId: course._id
+        })
+    } catch (error) {
+       res.status(500).json({
+        error
+       })
+    }
 })
 
 
-adminRouter.put("/course", (req, res) => {
+adminRouter.put("/course", adminMiddleware, async (req, res) => {
+    const creatorId = req.userId
+    const { title, description, price, imageUrl, courseId } = req.body
 
-
-    res.send({
-        message: "Admin created a course successfully"
-    })
+    try {
+       const course =  await courseModel.updateOne({
+        _id: courseId,
+        creatorId
+       },
+        {
+            title, description, imageUrl, price
+        })
+        // console.log(courseId)
+        res.send({
+            message: "Course updated successfully",
+            courseId: course._id
+        })
+    } catch (error) {
+       res.status(500).json({
+        error
+       })
+    }
 })
 
 
-adminRouter.delete("/course", (req, res) => {
+adminRouter.get("/course/bulk", adminMiddleware, async (req, res) => {
+    const adminId = req.userId
 
-
-    res.send({
-        message: "Admin deleted a course successfully"
-    })
-})
-
-
-adminRouter.patch("/bulk", (req, res) => {
-
-
-    res.send({
-        message: "Course content added successfully successfully"
-    })
+    try {
+       const courses =  await courseModel.find({
+        creatorId: adminId
+       })
+    //    console.log(courses);
+       
+        res.send({
+            message: "All of your courses",
+            courses
+        })
+    } catch (error) {
+       res.status(500).json({
+        error
+       })
+    }
 })
 
 module.exports = {

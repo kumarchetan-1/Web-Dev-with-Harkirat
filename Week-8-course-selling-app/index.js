@@ -1,5 +1,5 @@
+require("dotenv").config()
 const express = require("express")
-const jwt = require("jsonwebtoken")
 const { userRouter } = require("./routes/user")
 const { adminRouter } = require("./routes/admin")
 const { courseRouter } = require("./routes/course")
