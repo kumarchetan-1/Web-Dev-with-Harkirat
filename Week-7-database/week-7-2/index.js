@@ -10,6 +10,7 @@ require('dotenv').config()
 const port = process.env.PORT || 3000; // Default to 3000 if not set
 const dbConnectionString = process.env.DB_CONNECTION_STRING;
 mongoose.connect(dbConnectionString)
+.then(()=>{ console.log("Database connected!")})
 
 const app = express();
 app.use(express.json());
