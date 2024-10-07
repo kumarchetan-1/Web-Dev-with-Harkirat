@@ -51,7 +51,7 @@ adminRouter.post("/signup", async (req, res) => {
         })
     } catch (error) {
         res.send({
-            message: "Error in signing up",
+            message: "email already exists",
             error: error
         })
     }
@@ -127,15 +127,23 @@ adminRouter.put("/course", adminMiddleware, async (req, res) => {
         {
             title, description, imageUrl, price
         })
-        // console.log(courseId)
-        res.send({
-            message: "Course updated successfully",
-            courseId: course._id
-        })
+        console.log(course)
+        if (course.matchedCount) {
+            res.send({
+                message: "Course updated successfully",
+                courseId: course._id
+            })
+        } else{
+            res.json({
+                message: "You don't have access to these courses"
+            })
+        }
+
     } catch (error) {
        res.status(500).json({
+        message: "Error in updating course ",
         error
-       })
+       }) 
     }
 })
 

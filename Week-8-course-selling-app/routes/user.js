@@ -1,5 +1,7 @@
 const { Router } = require("express")
 const { USER_JWT_SECRET } = require("../config")
+const { userMiddleware } = require("../middlewares/user")
+const { userModel, purchaseModel, courseModel } = require("../db")
 const userRouter = Router()
 
 
@@ -30,14 +32,14 @@ userRouter.post("/signup", async (req, res) => {
         })
         return
     }
-        
+
     try {
         const hashedPassword = await bcrypt.hash(password, 5)
-        await adminModel.create({
-          email, 
-          password: hashedPassword,
-          firstName, 
-          lastName
+        await userModel.create({
+            email,
+            password: hashedPassword,
+            firstName,
+            lastName
         })
         res.send({
             message: "Signed up successfully!"
@@ -53,16 +55,16 @@ userRouter.post("/signup", async (req, res) => {
 
 userRouter.post("/login", async (req, res) => {
     const { email, password } = req.body
-    const user = await userRouter.findOne({email})
+    const user = await userModel.findOne({ email })
     // console.log(foundUser);
 
-    if(!user){
+    if (!user) {
         res.send({
             message: "User not found in our database"
         })
         return
     }
-    
+
     try {
         const isCorrectPassword = await bcrypt.compare(password, user.password)
 
@@ -73,12 +75,12 @@ userRouter.post("/login", async (req, res) => {
             res.send({
                 token: token
             })
-        } else{
+        } else {
             res.status(401).send({
                 message: "Incorrect credentials"
             })
         }
-        
+
     } catch (error) {
         res.status(500).json({
             error
@@ -87,13 +89,31 @@ userRouter.post("/login", async (req, res) => {
 })
 
 
-userRouter.get("/purchases", (req, res)=>{
+userRouter.get("/purchases", userMiddleware, async (req, res) => {
+    const userId = req.userId
 
+    try {
+        const purchases = await purchaseModel({
+            userId
+        })
 
-    res.send({
-        message: "User purchases"
-    })
+        const courses = await courseModel({
+            _id: { $in: purchases.map(course => course.coursseId) }
+        })
+
+        res.send({
+            purchases,
+            courses
+        })
+
+    } catch (error) {
+       res.status(500).json({
+        message: "Issue in fetching your courses",
+        error
+       })
+    }
 })
+
 
 module.exports = {
     userRouter
