@@ -46,11 +46,11 @@ adminRouter.post("/signup", async (req, res) => {
             firstName,
             lastName
         })
-        res.send({
+        res.json({
             message: "Signed up successfully!"
         })
     } catch (error) {
-        res.send({
+        res.json({
             message: "email already exists",
             error: error
         })
@@ -64,7 +64,7 @@ adminRouter.post("/login", async (req, res) => {
     // console.log(admin);
 
     if (!admin) {
-        res.send({
+        res.json({
             message: "User not found in our database"
         })
         return
@@ -77,11 +77,11 @@ adminRouter.post("/login", async (req, res) => {
             const token = jwt.sign({
                 id: admin._id.toString()
             }, ADMIN_JWT_SECRET)
-            res.send({
+            res.json({
                 token: token
             })
         } else {
-            res.status(401).send({
+            res.status(401).json({
                 message: "Incorrect credentials"
             })
         }
@@ -103,7 +103,7 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
             title, description, imageUrl, price, creatorId
         })
         // console.log(creatorId)
-        res.send({
+        res.json({
             message: "Course created successfully",
             courseId: course._id
         })
@@ -129,13 +129,13 @@ adminRouter.put("/course", adminMiddleware, async (req, res) => {
         })
         console.log(course)
         if (course.matchedCount) {
-            res.send({
+            res.json({
                 message: "Course updated successfully",
                 courseId: course._id
             })
         } else{
             res.json({
-                message: "You don't have access to these courses"
+                message: "Course doesn't exists"
             })
         }
 
@@ -157,7 +157,7 @@ adminRouter.get("/course/bulk", adminMiddleware, async (req, res) => {
        })
     //    console.log(courses);
        
-        res.send({
+        res.json({
             message: "All of your courses",
             courses
         })

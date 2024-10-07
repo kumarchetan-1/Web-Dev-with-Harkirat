@@ -6,7 +6,7 @@ const courseRouter = Router()
 courseRouter.get("/purchase", userMiddleware, async (req, res) => {
     const { courseId } = req.body
     const userId = req.userId
-//  Here should be a check if the user had paid the price
+//  Here should be a check if the user had paid the price                   
     try {
         await purchaseModel.create({
             courseId, userId
