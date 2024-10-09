@@ -92,7 +92,7 @@ userRouter.get("/purchases", userMiddleware, async (req, res) => {
 
     try {
         const purchases = await purchaseModel.find({ userId })
-        const courseIds = purchases.map(course => course.courseId)
+        const courseIds = purchases.map(purchase => purchase.courseId)
         const courses = await courseModel.find({ _id: { $in: courseIds } })
 
         res.status(200).json({ purchases, courses })
@@ -113,7 +113,7 @@ userRouter.get("/purchases", userMiddleware, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            message: "Issue in fetching your courses",
+            message: "Issue in fetching your purchased courses",
             error
         })
     }
