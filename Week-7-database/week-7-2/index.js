@@ -25,7 +25,7 @@ app.post("/signup", async function (req, res) {
             .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter (A-Z)" }) // At least one uppercase letter
             .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter (a-z)" }) // At least one lowercase letter
             .regex(/\d/, { message: "Password must contain at least one digit (0-9)" })               // At least one digit
-            .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: "Password must contain at least one special character (!@#$%^&*)" }) // Special character
+            .regex(/[\W_]/, { message: "Password must contain at least one special character " }) // Special character
             .regex(/^\S*$/, { message: "Password must not contain spaces" }),  // No spaces allowed
         name: z.string().min(1).max(100) // should not be null 
     })
