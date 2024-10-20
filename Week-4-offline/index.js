@@ -41,6 +41,8 @@ app.post("/", function (req, res) {
     res.json({ status: "Done" })
 })
 
+
+// Converts unhealthy kidneys to healthy
 app.put("/", function (req, res) {
     if (isUnhealthyKidneys()) {
         for (let i = 0; i < users[0].kidneys.length; i++) {
@@ -52,6 +54,7 @@ app.put("/", function (req, res) {
     }
 })
 
+//  Remove all unhealthy kidneys
 app.delete("/", function (req, res) {
     if (isUnhealthyKidneys()) {
         users[0].kidneys = users[0].kidneys.filter(kidney => kidney.healthy == true)

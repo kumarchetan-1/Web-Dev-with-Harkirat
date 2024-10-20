@@ -24,7 +24,7 @@ program.command('add')
       if (!readErr) {
         try {
           tasks = JSON.parse(data)
-          // console.log(tasks)
+          console.log(tasks)
         } catch (parseErr) {
           console.log("Error parsing existing tasks, starting with an empty list.");
 

@@ -127,7 +127,9 @@ adminRouter.put("/course", adminMiddleware, async (req, res) => {
         {
             title, description, imageUrl, price
         })
+
         console.log(course)
+        
         if (course.matchedCount) {
             res.json({
                 message: "Course updated successfully",

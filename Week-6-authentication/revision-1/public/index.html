@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple signin signup</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"
+        integrity="sha512-DdX/YwF5e41Ok+AI81HI8f5/5UsoxCVT9GKYZRIzpLxb8Twz4ZwPPX+jQMwMhNQ9b5+zDEefc+dcvQoPWGNZ3g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <form>
+        <h2>Signup Form</h2>
+        <input type="email" name="username" id="email" placeholder="email">
+        <input type="password" name="password" id="password" placeholder="password">
+        <button onclick="signup()">Signup</button>
+    </form>
+    <form>
+        <h2>Signin Form</h2>
+        <input type="email" name="username" id="userEmail" placeholder="email">
+        <input type="password" name="password" id="userPassword" placeholder="password">
+        <button onclick="signin()">Signin</button>
+    </form>
+    <div>
+        User information:
+        <div id="information"></div>
+    </div>
+    <div>
+        <button onclick="logout()">Logout</button>
+    </div>
+    <script>
+        async function signup() {
+            const email = document.getElementById("email").value
+            const password = document.getElementById("password").value
+
+            const response = await axios.post("http://localhost:3000/signup", {
+                email,
+                password
+            })
+            alert("Signup successfull")
+        }
+
+        async function signin() {
+            const email = document.getElementById("userEmail").value
+            const password = document.getElementById("userPassword").value
+
+            const signInResponse = await axios.post("http://localhost:3000/signin", {
+                email,
+                password
+            })
+
+            localStorage.setItem("token", signInResponse.data.token)
+            alert("Signed In")
+        }
+
+        function logout() {
+            localStorage.removeItem("token")
+            alert("Signed Out Successfully")
+        }
+
+        async function getUserInformation() {
+            const token = localStorage.getItem("token")
+
+            if (token) {
+                const response = await axios.get("http://localhost:3000/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                document.getElementById("information").innerHTML = response.data.email
+                console.log(response.data.email)
+            }
+        }
+
+        getUserInformation();
+
+    </script>
+</body>
+
+</html>
