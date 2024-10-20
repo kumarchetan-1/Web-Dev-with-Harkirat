@@ -15,7 +15,7 @@ const userSchema = z.object({
         .regex(/[A-Z]/, { message: "Password must have atleast one uppercase character" })
         .regex(/[a-z]/, { message: "Password must have atleast one lowercase character" })
         .regex(/\d/, { message: "Password must have atleast one digit " })
-        .regex(/[.',{}@!$#%^*()-+=_|]/, { message: "Password must have atleast one special character from these [.',{}@!$#%^*()-+=_|]" })
+        .regex(/[\W_]/, { message: "Password must have atleast one special characters" })
         .regex(/^\S*$/, { message: "must not have any spaces in it." }),
     firstName: z.string().min(1).max(30),
     lastName: z.string().max(30)
