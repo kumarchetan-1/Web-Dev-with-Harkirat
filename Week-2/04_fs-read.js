@@ -19,9 +19,9 @@ const fs =  require("fs")
 //     fs.readFile(fileName, "utf-8", function(error, data){
 //         if (!error) {
 //           const cleanedData = data.trim()
-//           console.log(cleanedData)
+//         //   console.log(cleanedData)
 //           fs.writeFile(fileName, cleanedData, (err)=>{
-//             if(!error){
+//             if(!err){
 //                 console.log("File cleaned successfully")
 //             } else{
 //                 console.log("Error is cleaning the file", err);
@@ -33,7 +33,7 @@ const fs =  require("fs")
 //    })
 // }
 
-// const newPromise = new cleanFile('Week-2/chapter1.txt')
+// const newPromise = new cleanFile('./chapter1.txt')
 // newPromise.then(fileClean)
 
 
@@ -70,33 +70,61 @@ const fs =  require("fs")
 
 //    Writing our own promise class
 
-class Promise2{
-    constructor(fn){
-        let afterDone = ()=>{
+// class Promise2{
+//     constructor(fn){
+//         let afterDone = ()=>{
+//             this.resolve()
+//         }
+//         fn(afterDone)
+//     }
+//     then(callback){
+//         this.resolve = callback
+//     }
+// }
+
+// function readTheFile(resolve){
+// setTimeout(function(){
+//     console.log("callback based settimeout completed");
+//     resolve()
+// }, 3000)
+// }
+
+// function setTimeoutPromisified2(){
+//     return new Promise2(readTheFile)
+// }
+
+// const p = setTimeoutPromisified2()
+
+// function callback2(){
+//     console.log("Callback 2 has beeen called");
+// }
+
+// p.then(callback2)
+
+
+
+class promise3 {
+    constructor(func) {
+        func(()=>{
             this.resolve()
-        }
-        fn(afterDone)
+        })
     }
     then(callback){
         this.resolve = callback
     }
 }
 
-function readTheFile(resolve){
-setTimeout(function(){
-    console.log("callback based settimeout completed");
-    resolve()
-}, 3000)
+
+function customPromisifiedSetTimeout() {
+    return new promise3((resolve)=>{
+        setTimeout(()=>{
+            console.log("Inner Settimeout")
+            resolve()
+        }, 2000)
+    })
 }
 
-function setTimeoutPromisified2(){
-    return new Promise2(readTheFile)
-}
-
-const p = setTimeoutPromisified2()
-
-function callback2(){
-    console.log("Callback 2 has beeen called");
-}
-
-p.then(callback2)
+const customValue = customPromisifiedSetTimeout()
+customValue.then(()=>{
+    console.log("Resolved called")
+})
