@@ -46,9 +46,11 @@ class Rectangle extends Shape{
         this.width= width
         this.height = height
     }
+
     area(){
         return this.height*this.width;
     }
+
     getDescription(){
         console.log(`A rectangle with width ${this.width}, height ${this.height}, and color ${this.color}`)
     }
@@ -59,28 +61,30 @@ class Circle extends Shape{
         super(color)
         this.radius = radius
     }
+
     area(){
         const areaOfCircle = Math.PI*this.radius*this.radius;
         return areaOfCircle
     }
+
     getDescription() {
         return `A circle with radius ${this.radius} and color ${this.color}`;
     }
 }
 
 
-const circle = new Circle(20);
-console.log(circle.area());
+const circle = new Circle(21, "red");
+console.log(circle.getDescription());
 
 
 // Inbuilt JS classes
 
-const now = new Date()
-console.log(now.getDay())
+// const now = new Date()
+// console.log(now.getDay())
 
 // Map class
 
-const map = new Map()
-map.set("name", "Chetan")
-map.set("age", 24)
-console.log(map.get("name"))
+// const map = new Map()
+// map.set("name", "Chetan")
+// map.set("age", 24)
+// console.log(map.get("name"))
