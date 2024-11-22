@@ -8,8 +8,15 @@ app.get("/", (req, res)=>{
 })
 
 app.post("/", (req, res)=>{
-   todo.push({
-    title : req.get("task")
-   })
+   const newTask = req.body.task
+   if (newTask) {
+      todo.push({
+         title : newTask
+        })
+        res.send(200)
+   } else{
+      res.sendStatus(400)
+   }
 })
 
+app.listen(3000, ()=> console.log("Listening on Port 3000"))

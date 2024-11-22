@@ -27,11 +27,9 @@ program.command('add')
           console.log(tasks)
         } catch (parseErr) {
           console.log("Error parsing existing tasks, starting with an empty list.");
-
         }
       } else {
         console.log(`Error in reading file ${readErr.message}`)
-
       }
 
       tasks.push(todoObj)
@@ -56,7 +54,7 @@ program.command('remove')
         try {
           tasks = JSON.parse(data)
           const initialLength = tasks.length
-          tasks = tasks.filter(item=> item["task"] !== taskToRemove)
+          tasks = tasks.filter(item => item["task"] !== taskToRemove)
           if (tasks.length === initialLength) {
             console.log("Task not found");
             return
@@ -67,8 +65,8 @@ program.command('remove')
         }
       } else {
         console.log(`Error in reading file ${readErr.message}`)
-
       }
+      
       // tasks.push(todoObj)
       let jsonData = JSON.stringify(tasks, null, 2)
       fs.writeFile("todo-list.json", jsonData, (err) => {
@@ -92,10 +90,10 @@ program.command('update')
       if (!readErr) {
         try {
           tasks = JSON.parse(data)
-          const taskIndex =  tasks.findIndex(item=> item["task"] == taskToUpdate)
-         if (taskIndex !== -1) {
-          tasks[taskIndex]["task"] = updatedTask
-         }
+          const taskIndex = tasks.findIndex(item => item["task"] == taskToUpdate)
+          if (taskIndex !== -1) {
+            tasks[taskIndex]["task"] = updatedTask
+          }
         } catch (parseErr) {
           console.log("Error parsing existing tasks, starting with an empty list.");
         }

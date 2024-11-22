@@ -44,6 +44,7 @@
         const btn = document.querySelector("#addBtn")
         const input = document.querySelector("input")
         let todoList = document.querySelector(".toDoTaskList")
+
         btn.addEventListener("click", () => {
             const uesrInput = input.value
             if (uesrInput.trim() !== "") {
@@ -63,7 +64,6 @@
             if (e.target && e.target.classList.contains("removeBtn")) {
                 e.target.parentElement.remove()
             }
-
         })
 
     </script>
