@@ -12,7 +12,6 @@ function showReqDetails(req, res, next) {
 
 app.use(showReqDetails)
 app.get("/home", (req, res)=>{
-
     res.json({
         message: `Home Page`
     })

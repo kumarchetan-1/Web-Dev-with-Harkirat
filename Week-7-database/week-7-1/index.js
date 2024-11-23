@@ -22,7 +22,7 @@ app.post("/signup", async (req, res)=>{
             message: "you are signed up!"
         })
     } catch (error) {
-        console.error("Signup error:", error);
+        // console.error("Signup error:", error);
         res.status(500).send({ error: "Error signing up" });
     }
 })
@@ -67,7 +67,7 @@ function auth(req, res, next) {
     }
 }
 
-app.post("/todo",auth, async(req, res)=>{
+app.post("/todo", auth, async(req, res)=>{
   const userId = req.userId
   const description = req.body.description
   const todoStatus = req.body.todoStatus

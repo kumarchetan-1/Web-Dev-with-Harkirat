@@ -12,20 +12,22 @@
     <input type="number" name="first-num" id="first-num" placeholder="First number">
     <input type="number" name="second-num" id="second-num" placeholder="Second number">
     <button onclick="hitYourBackend()" id="getSum">Get the sum</button>
-    
-    
-    
+    <div class="show-result"></div>
     
     <script>
        async function hitYourBackend() {
             const a = document.getElementById("first-num").value
             const b = document.getElementById("second-num").value
+            const resultDiv = document.querySelector(".show-result")
            
             const response = await axios.post("http://localhost:3000/sum", {
                 a: a,
-                b: b
+                b: b 
             })
-            console.log(response.data)
+            const data = response.data
+            resultDiv.innerHTML = `<h3>Sum is ${data.sum} </h3>`
+            console.log(data)
+
         }
     </script>
 </body>

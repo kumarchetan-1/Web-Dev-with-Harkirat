@@ -11,5 +11,16 @@ const c = nums.filter((num)=>{
 
 console.log(c)
 
+const fruits = ["Apple", "Banana", "Orange", "Pineapple"]
+const wordCouts = fruits.reduce((accumulator, currentValue)=> accumulator + currentValue, 0)
+const fruitsCount = fruits.reduce((acc, currVal)=> {
+    acc[currVal] = (acc[currVal] || 0) + 1
+    return acc;
+}, {})
+
+console.log(`wordCouts : ${wordCouts}`)
+console.log(`fruitsCount : ${JSON.stringify(fruitsCount)}`)
+
+
 const foundNum = nums.find(num => num>3) // Find the first number greater than 3
 console.log(foundNum) // returns undefined if found nothing

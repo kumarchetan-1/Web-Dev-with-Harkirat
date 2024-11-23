@@ -45,14 +45,14 @@ app.post("/signin", (req, res)=>{
     const username = req.body.username
     const password = req.body.password
 
-    // const user = users.find((user)=> (user.username === username && user.password === password))
-    // Or we can use this approach instead of find method of array
-   let user = null
-   for (let i = 0; i < users.length; i++) {
-    if (users[i].username === username && users[i].password === password) {
-        user = users[i]
-    }
-   }
+    const user = users.find((user)=> (user.username === username && user.password === password)) // returns first matching user  
+    //    Or we can use this approach instead of find method of array
+    //    let user = null
+    //    for (let i = 0; i < users.length; i++) {
+    //     if (users[i].username === username && users[i].password === password) {
+    //         user = users[i]
+    //     }
+    //    }
 
     if (user) {
         // const token = generateToken()

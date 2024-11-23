@@ -2,12 +2,12 @@ const express = require("express")
 
 const app = express()
 
-let requrestCount = 0
+let requestCount = 0
 
 function requestIncreaser(req, res, next) {
-    requrestCount++
+    requestCount++
     req.name = "Tech Ace"
-    console.log(`Total num of request ${requrestCount}`);
+    console.log(`Total num of request ${requestCount}`);
     res.json({
         name: "I ended the request early"
     })
@@ -20,7 +20,6 @@ function sumHandler(req, res){
     const a = parseInt(req.query.a)
     const b = parseInt(req.query.b)
     console.log(req.name);
-
 
     res.json({
         ans: a + b
@@ -37,7 +36,7 @@ function sumHandler(req, res){
 
 app.get("/admin", (req, res)=>{
   res.json({
-    numOfRequests: `${requrestCount}`
+    numOfRequests: `${requestCount}`
   })
 })
 

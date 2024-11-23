@@ -15,6 +15,9 @@ function signJWT(username, password) {
         return jwt.sign({
             username
         }, JWT_SECRET)
+    } else{
+        console.error('Username is invalid:', usernameResponse.error);
+        console.error('Password is incorrect:', passwordResponse.error);
     }
     return null
 }
