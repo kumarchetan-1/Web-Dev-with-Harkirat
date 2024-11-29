@@ -8,7 +8,7 @@ function userMiddleware(req, res, next) {
         req.userId = decoded.id
         next()
         return
-    } else{
+    } else {
         res.status(401).json({
             message: "You are not signed in"
         })

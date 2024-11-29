@@ -19,7 +19,6 @@ const UserSchema = new Schema({
 }, { timestamps: true } )
 
 const AdminSchema = new Schema({
-    name: String,
     email: { type: String, unique: true},
     password: String,
     firstName: String,

@@ -7,40 +7,40 @@ import { usePrev } from './hooks/usePrev'
 
 // Approach 2 of useDebounce (Recommended)
 
-function useDebounce(value, delay) {
-  const [debouncedVal, setDebouncedVal] = useState(value)
+// function useDebounce(value, delay) {
+//   const [debouncedVal, setDebouncedVal] = useState(value)
 
-  useEffect(()=>{
-  const handler = setTimeout(()=>{
-    setDebouncedVal(value)
-  }, delay)
+//   useEffect(()=>{
+//   const handler = setTimeout(()=>{
+//     setDebouncedVal(value)
+//   }, delay)
 
-  return clearTimeout(handler)
+//   return clearTimeout(handler)
 
-  }, [value])
+//   }, [value])
 
-  return debouncedVal
-}
+//   return debouncedVal
+// }
 
-function App() {
-  const [inputVal, setInputVal ] = useState("")
-  const debounceVal = useDebounce(inputVal, 200)
+// function App() {
+//   const [inputVal, setInputVal ] = useState("")
+//   const debounceVal = useDebounce(inputVal, 200)
   
-  function change(e) {
-    setInputVal(e.taget.value)
-  }
+//   function change(e) {
+//     setInputVal(e.taget.value)
+//   }
 
-  useEffect(()=>{
-  // expensive operation,
-  // fetch
-  console.log("Expensive operation");
+//   useEffect(()=>{
+//   // expensive operation,
+//   // fetch
+//   console.log("Expensive operation");
   
-  }, [debounceVal])
+//   }, [debounceVal])
 
-  return <div>
-    <input type="text" name="search" onChange={change} />
-  </div>
-}
+//   return <div>
+//     <input type="text" name="search" onChange={change} />
+//   </div>
+// }
 
 // Approach 1 of useDebounce hook
 // function useDebounce(originalFn) {
@@ -105,29 +105,29 @@ function App() {
 //   </div>
 // }
 
-// // useFetch use-case 1 simple implementation
-// function App() {
-//   // const postTitle = usePostTitle();
-//   const [currentPost, setCurrentPost] = useState(1)
-//   const { finalData, loading } = useFetch(`https://jsonplaceholder.typicode.com/posts/${currentPost}`, 10)
+// useFetch use-case 1 simple implementation
+function App() {
+  // const postTitle = usePostTitle();
+  const [currentPost, setCurrentPost] = useState(1)
+  const { finalData, loading } = useFetch(`https://jsonplaceholder.typicode.com/posts/${currentPost}`, 10)
   
-//   if (loading) {
-//     return "loading..."
-//   }
+  if (loading) {
+    return "loading..."
+  }
   
-//   return <div>
-//     {/* {postTitle} */}
-//     <button onClick={()=>setCurrentPost(1)}>Post 1 </button>
-//     <button onClick={()=>setCurrentPost(2)}>Post 2 </button>
-//     <button onClick={()=>setCurrentPost(3)}>Post 3 </button>
-//     <div>
-//     {JSON.stringify(finalData.title)}
-//     </div>
-//   </div>
-// }
+  return <div>
+    {/* {postTitle} */}
+    <button onClick={()=>setCurrentPost(1)}>Post 1 </button>
+    <button onClick={()=>setCurrentPost(2)}>Post 2 </button>
+    <button onClick={()=>setCurrentPost(3)}>Post 3 </button>
+    <div>
+    {JSON.stringify(finalData.title)}
+    </div>
+  </div>
+}
 
 
-// // Custom hook
+// Custom hook
 // function useCount() {
 //   const [count, setCount] = useState(0)
 
@@ -143,14 +143,14 @@ function App() {
 // function App() {
 
 //   return ( <div>
-//     <Increase />
-//     <Increase />
-//     <Increase />
+//     <Counter />
+//     <Counter />
+//     <Counter />
 //     </div>
 //   )
 // }
 
-// function Increase(){
+// function Counter(){
 //   const {count, increaseCount } = useCount()
 //   return <button onClick={increaseCount}>Increase Count {count}</button>
 // }

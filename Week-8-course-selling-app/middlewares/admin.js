@@ -7,7 +7,7 @@ const { ADMIN_JWT_SECRET } = require("../config")
 //     return function adminMiddleware(req, res, next) {
 //         const token = req.headers.authentication
 //         const response = jwt.verify(token, secret)
-    
+
 //         if (response) {
 //             response.userId = req.userId
 //             next()
@@ -17,7 +17,7 @@ const { ADMIN_JWT_SECRET } = require("../config")
 //                 message: "You are not signed in"
 //                })
 //         }
-       
+
 //     }
 // }
 
@@ -29,12 +29,12 @@ function adminMiddleware(req, res, next) {
         req.userId = decoded.id
         next()
         return
-    } else{
+    } else {
         res.status(401).send({
             message: "You are not signed in"
-           })
+        })
     }
-   
+
 }
 
 module.exports = {

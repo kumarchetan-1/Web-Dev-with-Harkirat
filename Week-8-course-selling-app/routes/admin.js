@@ -99,7 +99,7 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
     const { title, description, price, imageUrl } = req.body
 
     try {
-       const course =  await courseModel.create({
+        const course = await courseModel.create({
             title, description, imageUrl, price, creatorId
         })
         // console.log(creatorId)
@@ -108,9 +108,9 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
             courseId: course._id
         })
     } catch (error) {
-       res.status(500).json({
-        error
-       })
+        res.status(500).json({
+            error
+        })
     }
 })
 
@@ -120,32 +120,32 @@ adminRouter.put("/course", adminMiddleware, async (req, res) => {
     const { title, description, price, imageUrl, courseId } = req.body
 
     try {
-       const course =  await courseModel.updateOne({
-        _id: courseId,
-        creatorId
-       },
-        {
-            title, description, imageUrl, price
-        })
+        const course = await courseModel.updateOne({
+            _id: courseId,
+            creatorId
+        },
+            {
+                title, description, imageUrl, price
+            })
 
         console.log(course)
-        
+
         if (course.matchedCount) {
             res.json({
                 message: "Course updated successfully",
                 courseId: course._id
             })
-        } else{
+        } else {
             res.json({
                 message: "Course doesn't exists"
             })
         }
 
     } catch (error) {
-       res.status(500).json({
-        message: "Error in updating course ",
-        error
-       }) 
+        res.status(500).json({
+            message: "Error in updating course ",
+            error
+        })
     }
 })
 
@@ -154,19 +154,19 @@ adminRouter.get("/course/bulk", adminMiddleware, async (req, res) => {
     const adminId = req.userId
 
     try {
-       const courses =  await courseModel.find({
-        creatorId: adminId
-       })
-    //    console.log(courses);
-       
+        const courses = await courseModel.find({
+            creatorId: adminId
+        })
+        //    console.log(courses);
+
         res.json({
             message: "All of your courses",
             courses
         })
     } catch (error) {
-       res.status(500).json({
-        error
-       })
+        res.status(500).json({
+            error
+        })
     }
 })
 
