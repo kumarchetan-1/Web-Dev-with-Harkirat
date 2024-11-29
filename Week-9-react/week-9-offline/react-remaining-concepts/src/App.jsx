@@ -3,33 +3,88 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+// Error boundry
 
-const App = ()=>{
-  return(
-    <div>
-      <ClassCounter></ClassCounter>
-    </div>
-  )
+function App() {
+  
+  return <div>
+    <Card1></Card1>
+    <Card2></Card2>
+  </div>
 }
 
-class ClassCounter extends Component {
-  state = { count : 0 } 
-
-  increment = ()=>{
-     this.setState({ count: this.state.count+1 })
+class ErrorBoundry extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
   }
 
-  render(){
-    return (
-      <div>
-        <h1>Counter {this.state.count }</h1>
-        <button onClick={this.increment}>Increase counter </button>
-      </div>
-    )
+  static getDerivedStateFromError(error){
+    return { hasError: true }
   }
 }
 
+function Card1() {
+  throw new Error("Error while rendering");
+  
 
+  return <div style={{ color: "red", backgroundColor: "skyblue", borderRadius: 20}}>
+    Hi There
+  </div>
+}
+
+function Card2() {
+  return <div style={{ color: "red", backgroundColor: "yellow", borderRadius: 20}}>
+    Hello
+  </div>
+}
+
+// // Class based component
+// const App = ()=>{
+//   return(
+//     <div>
+//       <ClassCounter></ClassCounter>
+//     </div>
+//   )
+// }
+
+// class ClassCounter extends Component {
+//   state = { count : 0 } 
+
+//   increment = ()=>{
+//      this.setState({ count: this.state.count+1 })
+//   }
+
+//   render(){
+//     return (
+//       <div>
+//         <h1>Counter {this.state.count }</h1>
+//         <button onClick={this.increment}>Increase counter </button>
+//       </div>
+//     )
+//   }
+// }
+
+// Lists and keys
+// const ItemList = ({ items }) => {
+//     return (
+//         <ul>
+//             {items.map(item => (
+//                 <li key={item.id}>{item.name}</li>
+//             ))}
+//         </ul>
+//     );
+// };
+
+// const App = () => {
+//     const items = [
+//         { id: 1, name: 'Item 1' },
+//         { id: 2, name: 'Item 2' },
+//         { id: 3, name: 'Item 3' },
+//     ];
+
+//     return <ItemList items={items} />;
+// };
 
 // Children
 // function App() {

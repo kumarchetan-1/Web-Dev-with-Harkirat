@@ -1,35 +1,34 @@
 import { useState, useEffect } from 'react'
 import { PostComponent } from './post'
 
-
+// cleanup function by creating a countdown
 function App() {
-  const [showTimer, setShowTimer ] = useState(true)
+  const [showTimer, setShowTimer] = useState(true)
 
-  useEffect(()=>{
-    setInterval(()=>{
+  useEffect(() => {
+    setInterval(() => {
       console.log("inside showtimers's hidden Setinteral");
       setShowTimer(currentValue => !currentValue)
     }, 5000)
-  }, [])
+  }, []) // for mounting and unmounting of the timer component
 
   return <div>
-    { showTimer && <Timer></Timer>}
+    {showTimer && <Timer></Timer>}
   </div>
 }
 
-function Timer(params) {
+function Timer() {
   const [seconds, setSeconds] = useState(0)
 
-  useEffect(()=>{
-  const timer =  setInterval(()=>{
-    console.log("inside timer's Setinteral");
+  useEffect(() => {
+    const timer = setInterval(() => {
+      console.log("inside timer's Setinteral");
       setSeconds(curentSecond => curentSecond + 1)
     }, 1000)
 
-return ()=>{
-  clearInterval(timer)
-}
-
+    return () => {
+      clearInterval(timer)
+    }
   }, [])
 
   return <div>
@@ -37,7 +36,8 @@ return ()=>{
   </div>
 }
 
-// // App component
+// Dependency array and its use in re-rendering the component 
+// App component fetching data
 // function App(){
 // const [taskNum, setTask] = useState(1)
 // const [taskContent, setTaskContent] = useState({})
@@ -62,15 +62,18 @@ return ()=>{
 //       <button onClick={ ()=> setTask(task => 3) }>Task 3</button>
 //       <button onClick={ ()=> setTask(task => 4) }>Task 4</button>
 //       <div>
-//         { loaderState ? "loading..": taskContent.title } // conditional Rendering
+//         { loaderState ? "loading..": taskContent.title } {/* conditional Rendering */}
 //       </div>
 //     </div>
 //   )
 // }
 
+
+// Another ex- showing the component-re-rendering with the change in state
+//  Linkedin like topbar
 // const parentStyle = { 
 //   paddingTop: 40, 
-//   height: "100vh", 
+//   minHeight: "100vh", 
 //   width: "100%", 
 //   backgroundColor: "#c4c2c2", 
 //   display: "flex", 
@@ -81,18 +84,6 @@ return ()=>{
 
 // function App() {
 //   const [posts, setPosts] = useState([])
- 
-//   const postComponents = posts.map((post)=>{
-//     return (
-//       <PostComponent
-//       imgSrc = { post.imgSrc }
-//       name = { post.name }
-//       subtitle = { post.subtitle }
-//       time = { post.time }
-//       content = { post.content }
-//       />
-//     )
-//   })
 
 // function addPost() {
 //   setPosts([...posts, 
@@ -110,14 +101,24 @@ return ()=>{
 //     <div style={ parentStyle }>
 //       <h1>Linkedin Components</h1>
 //       <button onClick={ addPost }> Add post</button>
-//       { postComponents }
+//       { posts.map((post)=>{
+//           return (
+//             <PostComponent
+//             imgSrc = { post.imgSrc }
+//             name = { post.name }
+//             subtitle = { post.subtitle }
+//             time = { post.time }
+//             content = { post.content }
+//             />
+//           )
+//       }) }
 //     </div>
 //   )
 // }
 
-
+// to understand that without changing the state of a component it doesn't re-renders even with the direct dom manipulation
 // function App() {
-  
+
 //   return (
 //     <div>
 //       <Counter />
@@ -137,7 +138,7 @@ return ()=>{
 //       { isVisible && <p>Content will be toggled</p>}
 //     </div>
 //   )
-  
+
 // }
 
 
