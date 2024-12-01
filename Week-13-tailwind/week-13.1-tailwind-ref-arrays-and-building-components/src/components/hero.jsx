@@ -64,9 +64,9 @@ export function Hero({ disabled }) {
             {error && <p className="error text-red-500 mb-10">{error}</p>}
             <Button disabled={submitDisabled} onclick={handleSubmit} >  Continue </Button>
         </div>
-        {/* <div className="step-2">
+        <div className="step-2">
             <Input handleInputChange={(e) => setSubmitDiabled(e.target.value.trim() === "")} type={"email"} placeholder={"Email Id"} />
             <Button disabled={submitDisabled} > Continue </Button>
-        </div> */}
+        </div>
     </HeroSkeleton>
 }
