@@ -19,7 +19,7 @@ function Todo({id}) {
       {todo.description}
       <br />
     </>
-  )
+  ) 
 }
 
 export default App
