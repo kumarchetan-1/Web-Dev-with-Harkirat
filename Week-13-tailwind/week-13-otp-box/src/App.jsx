@@ -1,9 +1,9 @@
 
 import { useEffect, useState } from 'react'
 import './App.css'
-import { Sidebar4 } from './components/sidebars/Sidebar4'
-import { SidebarToggle } from './components/icons/SidebarToggle';
-import { SidebarClass1 } from './components/answers/1-basic-project';
+// import { Sidebar4 } from './components/sidebars/Sidebar4'
+// import { SidebarToggle } from './components/icons/SidebarToggle';
+// import { SidebarClass1 } from './components/answers/1-basic-project';
 import { SidebarToggle1 } from './components/icons/SideBarToggle2';
 
 
@@ -14,20 +14,51 @@ function App() {
   </div>
 }
 
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(false)
+
+  useEffect(()=>{
+  const media = window.matchMedia(query)
+  if (media.matches !== matches) {
+    setMatches(media.matches)
+  }
+  media.addEventListener('change', ()=>setMatches(media.matches))
+  return media.removeEventListener('change', ()=> setMatches(media.matches))
+  },[])
+
+  return matches
+}
 
 function Sidebar() {
-  const [toggleSidebar, setToggleSidebar] = useState(true)
-  const expendedSidebar = <aside className="h-screen w-80 bg-red-300">
+  const [toggleSidebar, setToggleSidebar] = useState(false)
+  const isMdWidth = useMediaQuery('(max-width: 768px)')
+  const [mobSidebar, setMobSidebar] = useState(false)
+
+  useEffect(()=>{
+    if (isMdWidth) {
+      setMobSidebar(<aside className="h-8 w-8 absolute left-0 top-0">
+        <div className="text-black">
+          <SidebarToggle1 setSidebarToggle={setToggleSidebar} toggleSidebar={toggleSidebar} />
+        </div>
+        </aside> ) 
+    } else {
+        setMobSidebar(<aside className="h-screen w-20 bg-red-300">
+          <div className="text-black">
+            <SidebarToggle1 setSidebarToggle={setToggleSidebar} toggleSidebar={toggleSidebar} />
+          </div>
+          </aside> )
+    }
+  },[isMdWidth])
+
+  const expendedSidebar = <aside className={`h-screen w-60 bg-red-300 ${isMdWidth && "absolute left-0 top-0 z-10" }`}>
     <div className="text-black">
-      <SidebarToggle1 setSidebarToggle={setToggleSidebar} />
+      <SidebarToggle1 setSidebarToggle={setToggleSidebar} toggleSidebar={toggleSidebar} />
     </div>
   </aside> 
-  const compressedSidebar = <aside className="h-screen w-20 bg-red-300">
-    <div className="text-black">
-      <SidebarToggle1 setSidebarToggle={setToggleSidebar} />
-    </div>
-  </aside> 
-  return ( toggleSidebar && expendedSidebar || compressedSidebar )
+
+
+  
+  return ( toggleSidebar && expendedSidebar || mobSidebar )
 }
 
 
