@@ -16,13 +16,21 @@ function App() {
 
 
 function Sidebar() {
-  
-  return <aside className='h-screen w-80 bg-red-300 '>
+  const [toggleSidebar, setToggleSidebar] = useState(true)
+  const expendedSidebar = <aside className="h-screen w-80 bg-red-300">
     <div className="text-black">
-      <SidebarToggle1 />
+      <SidebarToggle1 setSidebarToggle={setToggleSidebar} />
     </div>
-  </aside>
+  </aside> 
+  const compressedSidebar = <aside className="h-screen w-20 bg-red-300">
+    <div className="text-black">
+      <SidebarToggle1 setSidebarToggle={setToggleSidebar} />
+    </div>
+  </aside> 
+  return ( toggleSidebar && expendedSidebar || compressedSidebar )
 }
+
+
 
 function MainContent() {
   
