@@ -1,7 +1,7 @@
 
 import './App.css'
 import { Sidebar } from './components/sidebars/sidebar';
-import { MainContent } from './components/sidebars/MainContent';
+import { MainContent } from './components/mainContent/MainContent';
 
 
 
