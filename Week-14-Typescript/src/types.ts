@@ -26,6 +26,6 @@ type Manager = {
 
 type teamLead = Employee & Manager
 
-function name(params:type) {
+function leader(emp:teamLead) {
     
 }
