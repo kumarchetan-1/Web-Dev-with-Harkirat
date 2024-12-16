@@ -71,7 +71,7 @@ userRouter.post("/login", async (req, res) => {
             const token = jwt.sign({
                 id: user._id.toString()
             }, USER_JWT_SECRET)
-            res.status(200).json({ oken })
+            res.status(200).json({ token })
         } else {
             res.status(401).json({
                 message: "Incorrect credentials"
