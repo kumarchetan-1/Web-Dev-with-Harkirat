@@ -2,16 +2,21 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { USER_JWT_SECRET } from "./config";
 
-interface customRequest extends Request {
+export interface customRequest extends Request {
     userId?: string
 }
 
 export const userMiddleware = (req: customRequest, res: Response, next: NextFunction) => {
-    const token = req.headers.authentication;
+    const token = req.headers.authorization?.split(" ")[1];
+    console.log(token);
+    console.log(`Secret : ${USER_JWT_SECRET}`);
+    
+    
     if (!token) {
-        return res.status(401).send({
+         res.status(401).json({
             message: "You are not signed in"
         })
+        return
     }
 
     try {
@@ -20,7 +25,7 @@ export const userMiddleware = (req: customRequest, res: Response, next: NextFunc
         next()
     } catch (error) {
         res.status(403).send({
-            message: "Invalid Token ", 
+            message: "Invalid Token", 
             error
         })
     }
