@@ -7,4 +7,15 @@ declare namespace NodeJS {
 }
 
 
+# another way
+
+# declare global{
+#   namespace Express{
+#    export interface Request{
+#     userId?: string
+#    }
+#   }
+# } 
+
+
     # [key: string]: string | undefined;
