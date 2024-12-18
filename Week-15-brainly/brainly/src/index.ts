@@ -1,12 +1,12 @@
 // @ts-ignore
-import express, { Response } from "express"
+import express, { Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { z } from "zod"
-import { ContentModel, UserModel } from "./db"
+import { ContentModel, LinksModel, UserModel } from "./db"
 import bcrypt from 'bcrypt'
-import dotenv from "dotenv"
 import { USER_JWT_SECRET } from "./config"
-import { customRequest, userMiddleware } from "./middlewares"
+import { userMiddleware } from "./middlewares"
+import { randomSlug } from "./utils"
 
 const app = express()
 app.use(express.json())
@@ -95,7 +95,7 @@ app.post("/api/v1/signin", async (req, res) => {
 
 
 
-app.post("/api/v1/content", userMiddleware, async (req: customRequest, res: Response) => {
+app.post("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
     const { link, type, title, tags: [] } = req.body
     const id = req.userId
 
@@ -118,51 +118,94 @@ app.post("/api/v1/content", userMiddleware, async (req: customRequest, res: Resp
 
 })
 
-app.get("/api/v1/content", userMiddleware, async(req: customRequest, res: Response) => {
-     const userId = req.userId
+app.get("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
+    const userId = req.userId
 
-     try {
+    try {
         const content = await UserModel.find({
             userId
-         }).populate("UserId", "username")
-    
-         res.json({
-            content
-         })
-     } catch (error) {
+        })
+
+        res.json({
+            content : content
+        })
+    } catch (error) {
         res.status(500).json({
             message: "Error in getting the content",
             error
         })
-     }
+    }
 })
 
-app.delete("/api/v1/content", userMiddleware, async(req: customRequest, res: Response) => {
- const contentId = req.body.contentId
-try {
-    await ContentModel.deleteMany({
-        contentId,
-        userId: req.userId
-    })
+app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
+    const contentId = req.body.contentId
+    try {
+        await ContentModel.deleteMany({
+            contentId,
+            userId: req.userId
+        })
 
-    res.status(200).json({
-        message: "content deleted successfully"
-    })
-} catch (error) {
-    res.status(400).json({
-        message: "Unable to delete right now, try later.",
-        error
-    })
-}
-
-})
-
-app.delete("/api/v1/brain/share", (req, res) => {
+        res.status(200).json({
+            message: "content deleted successfully"
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: "Unable to delete right now, try later.",
+            error
+        })
+    }
 
 })
 
-app.delete("/api/v1/brain/:shareLink", (req, res) => {
+app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
+    const share = req.body.share
+    if (share) {
+        const hash = randomSlug(10)
+        await LinksModel.create({
+            userId: req.userId,
+            hash: hash
+        })
 
+        res.json({
+            link: `/share/${hash}`
+        })
+    } else {
+        await LinksModel.deleteOne({
+            userId: req.userId
+        })
+        res.json({
+            message: "Removed link"
+        })
+    }
+
+})
+
+app.post("/api/v1/brain/:shareLink", async (req, res) => {
+    const hash = req.params.shareLink
+
+    const link = await LinksModel.findOne({
+        hash
+    })
+
+    if (!link) {
+        res.status(411).json({
+            message: "Sorry incorrect input"
+        })
+        return
+    }
+
+    const content = ContentModel.find({
+        userId: link.userId
+    })
+
+    const user = await UserModel.findOne({
+        userId: link.userId
+    })
+
+    res.json({
+        username: user?.username,
+        content
+    })
 })
 
 

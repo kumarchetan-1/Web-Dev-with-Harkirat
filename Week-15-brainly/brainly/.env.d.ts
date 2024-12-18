@@ -11,11 +11,11 @@ declare namespace NodeJS {
 
 # declare global{
 #   namespace Express{
-#    export interface Request{
-#     userId?: string
-#    }
+#   export interface Request{
+#     userId: string
 #   }
-# } 
+#   }
+# }
 
 
     # [key: string]: string | undefined;
