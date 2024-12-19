@@ -4,8 +4,8 @@ export function randomSlug(num:number) {
     const length = radnomChars.length;
     let shareSlug = ""
     for(let i=0; i<num; i++){
-     shareSlug += radnomChars[Math.random()*length]
+     shareSlug += radnomChars[Math.floor(Math.random()*length)]
     }
-
+  console.log(shareSlug)
     return shareSlug
 }

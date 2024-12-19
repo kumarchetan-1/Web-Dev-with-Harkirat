@@ -1,14 +1,12 @@
 // create user models and schemas
 
 import mongoose, {Schema, model, ObjectId } from "mongoose";
-import dotenv  from "dotenv";
+import { MONGODB_CONNECTION_STRING } from "./config";
 
-dotenv.config()
-const db_connection_string = process.env.MONGODB_CONNECTION_STRING
 
+const db_connection_string = MONGODB_CONNECTION_STRING
 if (!db_connection_string) {
     throw new Error("MONGODB_CONNECTION_STRING is not defined in .env file");
-    
 }
 
 mongoose.connect(db_connection_string)
@@ -23,10 +21,10 @@ const UserSchema = new Schema({
 
 const ContentSchema = new Schema({
     link: String,
-    type: { type : String, enum: ["vide0", "article", "tweets", "link"] },
     title: String,
-    tags: [{ type: mongoose.Schema.Types.ObjectId , ref: "Tags"}],
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+    type: String,
+    tags: [{ type: mongoose.Types.ObjectId , ref: "Tags"}],
+    userId: { type: mongoose.Types.ObjectId, ref: "User" }
 })
 
 const TagsSchema = new Schema({
@@ -35,7 +33,7 @@ const TagsSchema = new Schema({
 
 const LinkSchema = new Schema({
     hash: {type: String, required: true},
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User"}
+    userId: { type: mongoose.Types.ObjectId, ref: "User"}
 })
 
 export const UserModel = model("User", UserSchema)

@@ -93,8 +93,6 @@ app.post("/api/v1/signin", async (req, res) => {
 
 })
 
-
-
 app.post("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
     const { link, type, title, tags: [] } = req.body
     const id = req.userId
@@ -125,9 +123,14 @@ app.get("/api/v1/content", userMiddleware, async (req: Request, res: Response) =
         const content = await UserModel.find({
             userId
         })
-
+        if (!content) {
+            res.json({
+                message: "Issue in fetching content",
+            })
+            return
+        }
         res.json({
-            content : content
+            content
         })
     } catch (error) {
         res.status(500).json({
@@ -160,6 +163,17 @@ app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response
 app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
     const share = req.body.share
     if (share) {
+        const existingLink = await LinksModel.findOne({
+            userId: req.userId
+        })
+
+        if (existingLink) {
+            res.json({
+                link: `/brain/${existingLink.hash}`
+            })
+            return
+        }
+
         const hash = randomSlug(10)
         await LinksModel.create({
             userId: req.userId,
@@ -167,7 +181,7 @@ app.post("/api/v1/brain/share", userMiddleware, async (req: Request, res: Respon
         })
 
         res.json({
-            link: `/share/${hash}`
+            link: `/brain/${hash}`
         })
     } else {
         await LinksModel.deleteOne({
@@ -188,18 +202,18 @@ app.post("/api/v1/brain/:shareLink", async (req, res) => {
     })
 
     if (!link) {
-        res.status(411).json({
+        res.status(403).json({
             message: "Sorry incorrect input"
         })
         return
     }
 
-    const content = ContentModel.find({
+    const content = await ContentModel.find({
         userId: link.userId
     })
 
     const user = await UserModel.findOne({
-        userId: link.userId
+        _id: link.userId
     })
 
     res.json({
