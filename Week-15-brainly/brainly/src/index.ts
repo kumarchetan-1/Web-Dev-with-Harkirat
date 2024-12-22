@@ -14,8 +14,8 @@ app.use(express.json())
 app.use(cors())
 
 const userSchema = z.object({
-    username: z.string().min(3).max(30),
-    password: z.string().min(8).max(30) 
+    username: z.string().min(3).max(10),
+    password: z.string().min(8).max(20)
         .regex(/[A-Z]/, "Password must include at least one uppercase letter")
         .regex(/[a-z]/, "Password must include at least one lowercase letter")
         .regex(/[\W_]/, "Password must include at least one special character")
@@ -67,25 +67,30 @@ app.post("/api/v1/signin", async (req, res) => {
     const { username, password } = req.body
 
     try {
-        const user = await UserModel.findOne({ username })
+        const existingUser = await UserModel.findOne({ username })
 
-        if (!user) {
+        if (!existingUser) {
             res.status(411).json({
                 message: "User doesn't exist in database"
             })
             return
         }
 
-        const isCorrectPassword = await bcrypt.compare(password, user.password ? user.password : "")
-        if (isCorrectPassword) {
-            const token = jwt.sign({
-                id: user._id.toString()
-            }, USER_JWT_SECRET ? USER_JWT_SECRET : "adsdsfds")
+        if (typeof existingUser.password == "string") {
+            const isCorrectPassword = await bcrypt.compare(password, existingUser.password)
+            if (isCorrectPassword) {
+                const token = jwt.sign({
+                    id: existingUser._id
+                }, USER_JWT_SECRET ? USER_JWT_SECRET : "adsdsfds")
 
-            res.json({
-                token
-            })
+                res.json({
+                    token
+                })
+            }
+        } else {
+            console.error('Password must be a string');
         }
+
     } catch (error) {
         res.status(401).json({
             message: "Invalid credentials",
@@ -96,14 +101,14 @@ app.post("/api/v1/signin", async (req, res) => {
 })
 
 app.post("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
-    const { link, type, title, tags: [] } = req.body
-    const id = req.userId
+    const { link, type, title } = req.body
+    const userId = req.userId
 
     try {
         await ContentModel.create({
             link, title, type,
             tags: [],
-            userId: id
+            userId
         })
 
         res.status(200).json({
@@ -122,7 +127,7 @@ app.get("/api/v1/content", userMiddleware, async (req: Request, res: Response) =
     const userId = req.userId
 
     try {
-        const content = await UserModel.find({
+        const content = await ContentModel.find({
             userId
         })
         if (!content) {
