@@ -7,13 +7,15 @@ import bcrypt from 'bcrypt'
 import { USER_JWT_SECRET } from "./config"
 import { userMiddleware } from "./middlewares"
 import { randomSlug } from "./utils"
+import cors from 'cors'
 
 const app = express()
 app.use(express.json())
+app.use(cors())
 
 const userSchema = z.object({
-    username: z.string().min(3).max(10),
-    password: z.string().min(8).max(20)
+    username: z.string().min(3).max(30),
+    password: z.string().min(8).max(30) 
         .regex(/[A-Z]/, "Password must include at least one uppercase letter")
         .regex(/[a-z]/, "Password must include at least one lowercase letter")
         .regex(/[\W_]/, "Password must include at least one special character")
