@@ -5,6 +5,9 @@ interface ButtonProps {
     text: string,
     startIcon?: ReactElement,
     endIcon?: ReactElement,
+    onClick?: ()=> void,
+    customClass?: string,
+    loading?: boolean
 }
 
 const variantClasses = {
@@ -14,9 +17,9 @@ const variantClasses = {
 
 const defaultStyles = "flex items-center justify-center px-4 py-2 rounded-md transition-all delay-100 ease-in-out font-thin hover:transition-all hover:delay-100 hover:ease-in-out"
 
-export function Button({variants, text, startIcon, endIcon}: ButtonProps) {
+export function Button({variants, text, startIcon, endIcon, onClick, customClass, loading}: ButtonProps) {
 
-    return <button className={` ${variantClasses[variants]} ${defaultStyles}`}>
+    return <button onClick={onClick} className={`${variantClasses[variants]} ${defaultStyles} ${customClass} ${loading? "opacity-35": "" }`} disabled={loading}>
         <div className="pr-2">
         {startIcon}
         </div>
