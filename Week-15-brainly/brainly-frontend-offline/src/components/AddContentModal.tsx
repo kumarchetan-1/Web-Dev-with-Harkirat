@@ -27,7 +27,8 @@ export function AddContentModal({ title, onCancel }: { title?: string, onSubmit?
                 },
                 {
                     headers: {
-                        'content-type': 'Application/JSON'
+                        'content-type': 'Application/JSON',
+                        Authorization: localStorage.getItem("token")
                     }
                 }
             )
