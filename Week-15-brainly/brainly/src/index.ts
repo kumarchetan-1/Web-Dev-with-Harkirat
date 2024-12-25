@@ -150,6 +150,26 @@ app.get("/api/v1/content", userMiddleware, async (req: Request, res: Response) =
 app.delete("/api/v1/content", userMiddleware, async (req: Request, res: Response) => {
     const contentId = req.body.contentId
     try {
+        await ContentModel.deleteOne({
+            contentId,
+            userId: req.userId
+        })
+
+        res.status(200).json({
+            message: "content deleted successfully"
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: "Unable to delete right now, try later.",
+            error
+        })
+    }
+
+})
+
+app.delete("/api/v1/brain/share", userMiddleware, async (req: Request, res: Response) => {
+    const contentId = req.body.contentId
+    try {
         await ContentModel.deleteMany({
             contentId,
             userId: req.userId
