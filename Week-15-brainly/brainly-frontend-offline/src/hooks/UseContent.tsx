@@ -29,26 +29,35 @@ export function useContent() {
                     console.warn("No content received from API");
                 }
             }).catch((error) => {
-                if (error.response) {
-                    console.error(
-                        "Server responded with error:",
-                        error.response.status,
-                        error.response.data
-                    );
-                } else if (error.request) {
-                    console.error("No response received from server:", error.request);
-                } else {
-                    console.error("Error in setting up the request:", error.message);
-                }
+                    console.error("No response received from server:", error);
             });
+    }
+
+   const deleteContent =  (_id: string)=>{
+        try {
+            axios.request({
+                method: 'delete',
+                url: `${BACKEND_URL}/api/v1/content`,
+                headers: {
+                    Authorization: localStorage.getItem('token')
+                },
+                data:{ _id } 
+             }).then(()=>{
+                setContents((prevContents)=> prevContents.filter((content)=> content._id !== _id))
+                console.log("Content deleted successful"); 
+            }).catch((error)=> console.log(`Error deleting content ${error}`))
+             
+        } catch (error) {
+            console.error(`Error deleting this content ${error}`)
+        }
     }
 
     useEffect(() => {
         refresh(); 
         const interval = setInterval(() => refresh(), 10 * 1000)
 
-        return () => clearInterval(interval); // Cleanup interval on unmount
+        return () => clearInterval(interval); 
     }, [])
 
-    return { contents, refresh };
+    return { contents, refresh, deleteContent };
 }

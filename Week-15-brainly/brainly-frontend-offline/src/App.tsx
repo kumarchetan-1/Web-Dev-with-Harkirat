@@ -14,7 +14,7 @@ function App() {
       <Route path="/signup" element={<Signup />}></Route>
       <Route path="/signin" element={<Signin />}></Route>
       <Route path="/dashboard" element={<Dashboard />}></Route>
-      <Route path="/share/:" element={<SharedBrainDashboard sharedBrainLink={""} />}></Route>
+      <Route path="/share/brain/:shareLink" element={<SharedBrainDashboard />}></Route>
     </Routes>
     </BrowserRouter>
   </div>

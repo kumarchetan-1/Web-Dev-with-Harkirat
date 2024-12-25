@@ -1,6 +1,4 @@
 
-
-
 import { Button } from '../components/Button'
 import { ShareIcon } from '../icons/ShareIcon'
 import { PlusIcon } from '../icons/PlusIcon'
@@ -15,7 +13,7 @@ import { ShareBrain } from '../components/ShareBrain'
 function Dashboard() {
   const [showModal, setShowModal] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
-  const {contents, refresh} = useContent()
+  const {contents, refresh, deleteContent} = useContent()
 
   useEffect(()=>{
     refresh()
@@ -41,12 +39,14 @@ function Dashboard() {
     <Button onClick={()=> setShowModal(true)} text='Add content' variants='primary' startIcon={<PlusIcon size='lg' />} />
     </div>
     <div className="flex gap-8 items-start ">
-    { contents.map(({title, type, link})=> <Card 
-               key={title}
+    { contents.map(({title, type, link, _id})=> <Card 
+               key={_id}
                title={title} 
                type={type} 
                customClass='basis-1/3' 
-               link={link}/>
+               link={link}
+               onDelete={()=> deleteContent(_id ? _id : "")}
+               />
                )}
     </div>
     </div>
