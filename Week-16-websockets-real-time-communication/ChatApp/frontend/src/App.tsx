@@ -1,66 +1,101 @@
 
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import MessageInput from './components/MessageInput'
+import MessageList from './components/MessageList'
+import ChatHeader from './components/ChatHeader'
+
+type Message = {
+id: string
+text: string
+sender: string
+timestamp: number
+}
+
 
 function App() {
-  const [messages, setMessages] = useState(["Hi there"])
-  const [input, setInput] = useState()
-  const wsRef = useRef()
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState("")
+  const wsRef = useRef<WebSocket | null>()
+  const userId = useRef(`user-${Math.random().toString(36).substr(2, 9)}`)
+
+
+  useEffect(()=>{
+    const ws = new WebSocket("ws://localhost:8080")
+
+     ws.onmessage = (event)=>{
+      let messageData: { type?: string; payload?: { message?: string; sender?: string } } | string;
+
+      try {
+        messageData = JSON.parse(event.data)
+      } catch (error) {
+        messageData = event.data;
+      }
+
+      if (typeof messageData === 'string') {
+        // Handle plain text messages
+        addMessage(messageData, 'Server');
+      } else if (messageData.type === 'chat' && messageData.payload) {
+        // Handle JSON-formatted chat messages
+        addMessage(messageData.payload.message || '', messageData.payload.sender || 'Anonymous');
+      }
+      //  setMessages(oldmessages => ([...oldmessages, event.data]))
+     }
+
+ 
+     wsRef.current = ws
+  
+     ws.onopen = ()=>{
+       ws.send(JSON.stringify({
+         type: "join",
+         payload: {
+           roomId: "red",
+           userId: userId.current
+         }
+       }))
+     }
+    
+     return ()=> ws.close()
+   }, [])
+
+   const addMessage = (text: string, sender: string) => {
+    setMessages(oldMessages => [...oldMessages, {
+      id: Date.now().toString(),
+      text,
+      sender,
+      timestamp: Date.now()
+    }])
+  }
 
   function sendMessage() {
-    // @ts-ignore
+
     if ( wsRef.current && input.trim()) {
-      // @ts-ignore
-      wsRef.current.send(JSON.stringify({
+      const message = {
         type: "chat",
         payload: {
-          message: input
+          message: input,
+          sender: userId.current
         }
-      })) 
-      // @ts-ignore
-       setInput('')
+      }
+
+      wsRef.current.send(JSON.stringify(message)) 
+      addMessage(input, userId.current)
+       setInput("")
     }
   }
 
-  useEffect(()=>{
-   const ws = new WebSocket("ws://localhost:8080")
 
-    ws.onmessage = (event)=>{
-      setMessages(oldmessages => ([...oldmessages, event.data]))
-    }
-// @ts-ignore
-    wsRef.current = ws
- 
-    ws.onopen = ()=>{
-      ws.send(JSON.stringify({
-        type: "join",
-        payload: {
-          roomId: "red"
-        }
-      }))
-    }
-   
-    return ()=> ws.close()
-  }, [])
-
-  return <div>
-    <div className="h-screen bg-black ">
-      <div className="bg-red-200 min-h-[90vh] px-8 py-10">
-      <h1 className='text-center text-4xl'>WebSocket Chat App</h1>
-      <div>
-      <ul>
-        {messages.map((message, index)=> <li key={index}> {message} </li>)}
-        <li></li>
-      </ul>
+  return (
+    <div className="flex flex-col h-screen bg-gray-100">
+      <ChatHeader />
+      <MessageList messages={messages} currentUserId={userId.current} />
+      <MessageInput 
+        input={input} 
+        setInput={setInput} 
+        sendMessage={sendMessage} 
+      />
     </div>
-      </div>
-      <div className="bg-blue-300 min-h-[10vh] px-8 py-2 items-center flex justify-center">
-    <input className='w-3/5 px-4 py-3 rounded-md' onChange={(e)=> setInput(e.target.value)}  type="text" name="message" placeholder='Type a message' />
-    <button className='-ml-4 px-4 py-3 bg-purple-600 text-white rounded-md' onClick={sendMessage} type="submit">Message</button>
-      </div>
-    </div>
-
-  </div>
+  )
 }
 
 export default App
