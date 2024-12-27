@@ -1,46 +1,65 @@
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
 function App() {
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState(["Hi there"])
   const [input, setInput] = useState()
-  let socket: WebSocket;
+  const wsRef = useRef()
 
   function sendMessage() {
-    if (socket && input.trim()) {
-       socket.send(input) 
+    // @ts-ignore
+    if ( wsRef.current && input.trim()) {
+      // @ts-ignore
+      wsRef.current.send(JSON.stringify({
+        type: "chat",
+        payload: {
+          message: input
+        }
+      })) 
+      // @ts-ignore
        setInput('')
     }
   }
 
   useEffect(()=>{
-    socket = new WebSocket("ws://localhost:8080")
+   const ws = new WebSocket("ws://localhost:8080")
 
-    socket.onmessage = (event)=>{
-     setMessages((prev)=> [...prev, event.data])
+    ws.onmessage = (event)=>{
+      setMessages(oldmessages => ([...oldmessages, event.data]))
     }
-
-    socket.onclose = ()=>{
-      console.log("WebSocket disconnected");
+// @ts-ignore
+    wsRef.current = ws
+ 
+    ws.onopen = ()=>{
+      ws.send(JSON.stringify({
+        type: "join",
+        payload: {
+          roomId: "red"
+        }
+      }))
     }
-
-    socket.onerror = (error)=>{
-      console.log(`Websocket error: ${error}`);
-      
-    }
-  })
+   
+    return ()=> ws.close()
+  }, [])
 
   return <div>
-    <h1>WebSocket Chat App</h1>
-    <div>
+    <div className="h-screen bg-black ">
+      <div className="bg-red-200 min-h-[90vh] px-8 py-10">
+      <h1 className='text-center text-4xl'>WebSocket Chat App</h1>
+      <div>
       <ul>
-        {messages.map((message, index)=> <li key={index}> message </li>)}
+        {messages.map((message, index)=> <li key={index}> {message} </li>)}
         <li></li>
       </ul>
     </div>
-     <input onChange={(e)=> setInput(e.target.value)}  type="text" name="message" placeholder='Type a message' />
-     <button onClick={sendMessage} type="submit">Message</button>
+      </div>
+      <div className="bg-blue-300 min-h-[10vh] px-8 py-2 items-center flex justify-center">
+    <input className='w-3/5 px-4 py-3 rounded-md' onChange={(e)=> setInput(e.target.value)}  type="text" name="message" placeholder='Type a message' />
+    <button className='-ml-4 px-4 py-3 bg-purple-600 text-white rounded-md' onClick={sendMessage} type="submit">Message</button>
+      </div>
+    </div>
+
   </div>
 }
 
