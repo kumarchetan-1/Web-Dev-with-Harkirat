@@ -3,7 +3,7 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-
+ 
 export default function Signup() {
     const router = useRouter()
     const [username, setUsername] = useState<string>("")
