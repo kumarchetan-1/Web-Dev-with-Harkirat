@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 
 const provider = NextAuth({
@@ -27,8 +28,13 @@ const provider = NextAuth({
             email: "kumarchetan.npr@gmail.com"
           }
         }
+      }),
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET
       })
-  ]
+  ],
+  secret: process.env.NEXTAUTH_SECRET
 })
 
 
