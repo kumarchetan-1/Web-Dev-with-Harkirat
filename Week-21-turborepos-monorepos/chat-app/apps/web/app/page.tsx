@@ -13,7 +13,7 @@ export default function Home() {
     justifyContent: "center"
   }}>
 
-<TextInput onChange={()=> { alert("Hi") }} placeholder="Room code" ></TextInput>
+<TextInput onChange={()=> { console.log("Hi") }} placeholder="Room code" ></TextInput>
 <button 
 onClick={()=>router.push("1234/chat")}
 style={{
