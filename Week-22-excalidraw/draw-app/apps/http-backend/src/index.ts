@@ -1,7 +1,5 @@
 import express from "express"
-import dotenv from "dotenv"
 import jwt from "jsonwebtoken"
-import { z } from "zod"
 import { JWT_SECRET } from "@repo/backend-common/config"
 import { CreateRoomSchema, CreateUserSchema, SigninSchema } from '@repo/common/types'
 
@@ -47,7 +45,7 @@ app.get("/create-room", (req, res)=>{
     return 
    } 
 
-    res.send("create room endpoing")
+    res.send("create room endpoint")
 })
 
 app.listen(3001)
