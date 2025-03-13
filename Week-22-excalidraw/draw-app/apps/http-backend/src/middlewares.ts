@@ -14,13 +14,16 @@ declare global{
 export function middleware(req: Request, res: Response, next: NextFunction){
     const token = req.headers['authorization'] ?? ""
 
-    if(!token) return res.status(403).json({ message: "Unauthorised" })
+    if(!token){
+        res.status(403).json({ message: "Unauthorised" })
+        return
+    }  
 
    try {
     const decoded = jwt.verify(token, JWT_SECRET)
        if (typeof decoded === "object" && "userId" in decoded) {
         req.userId = decoded.userId as string
-        return next()
+         next()
        } 
     } catch(error){
         res.status(403).json({
