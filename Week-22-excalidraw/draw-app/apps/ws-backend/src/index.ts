@@ -10,11 +10,16 @@ wss.on("connection", function connection(ws, request) {
         return
     }
 
-    const queryParam = new URLSearchParams(url.split("?")[0])
+    const queryParam = new URLSearchParams(url.split("?")[1])
     const token = queryParam.get('token') || ""
-    const decoded = jwt.verify(token, JWT_SECRET)
 
-    console.log("New connection established");
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET)
+    } catch (error) {
+        console.error("Invalid token", error)
+        ws.close()
+        return
+    }
 
     ws.send("Hello from WebSocket server")
     ws.on("message", function message(data) {

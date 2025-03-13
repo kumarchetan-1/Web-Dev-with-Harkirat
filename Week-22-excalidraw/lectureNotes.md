@@ -13,3 +13,5 @@
 13. <span style="color:red">Create a db package</span>  
 14. <span style="color:red">Using the db package in the http layer</span>  
 15. Add a common package where we add the zod schema and the JWT_SECRET
+16. Define the schema in schema.prisma (refer to the readme.md of ./packages/db directory)
+17. Complete the HTTP backend
