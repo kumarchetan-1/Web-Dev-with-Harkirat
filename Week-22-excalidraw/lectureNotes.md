@@ -15,3 +15,6 @@
 15. Add a common package where we add the zod schema and the JWT_SECRET
 16. Define the schema in schema.prisma (refer to the readme.md of ./packages/db directory)
 17. Complete the HTTP backend
+18. WS layer, room management, broadcast messages
+19. HTTP route for GET/chat?room=123
+20. Frontend
