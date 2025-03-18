@@ -40,39 +40,49 @@ app.post("/signup", async (req, res) => {
 })
 
 app.post("/signin", async (req, res) => {
-    const parsedData = SigninSchema.safeParse(req.body)
+    try {
+        const parsedData = SigninSchema.safeParse(req.body)
     if (!parsedData.success) {
-        res.json({
+        res.status(400).json({
+            success: false,
             message: "Incorrect inputs"
         })
         return
     }
+    const { username, password } = parsedData.data;
 
-    const existingUser = await prismaClient.user.findFirst({
+    const existingUser = await prismaClient.user.findUnique({ 
         where: {
-            email: parsedData.data.username,
-            password: parsedData.data.password
+            email: username
         }
     })
 
     if (!existingUser) {
-        res.status(403).json({
-            message: "Not authorised"
+        res.status(401).json({
+            success: false,
+            message: "Unauthorized: Incorrect password"
         })
-
         return
     }
 
-    if (typeof existingUser === "object" && existingUser) {
-        const isCorrectPassword = bcrypt.compare(parsedData.data.password, existingUser.password)
-        const userId = existingUser?.id
-        const token = jwt.sign({ userId }, JWT_SECRET)
+    const isPasswordCorrect = await bcrypt.compare(password, existingUser?.password)
+    if (!isPasswordCorrect) {
+         res.status(401).json({ message: "Incorrect Password"})
+         return
+    }
+        const token = jwt.sign({ userId: existingUser?.id }, JWT_SECRET)
 
-        res.json({
+        res.status(200).json({
+            success: true, 
+            message: "Login successful",
             token
         })
+    } catch (error) {
+        res.status(500).json({ 
+            success: false,
+            error 
+        })
     }
-
 
 })
 
@@ -111,9 +121,9 @@ app.post("/room", middleware, async (req, res) => {
 
 app.get("/chat/:roomId", async(req, res)=>{
     const roomId = Number(req.params.roomId)
-   const messages = await prismaClient.room.findMany({
+   const messages = await prismaClient.chat.findMany({
         where: {
-            id: roomId
+            roomId: roomId
         },
         orderBy: {
             id: 'desc'
