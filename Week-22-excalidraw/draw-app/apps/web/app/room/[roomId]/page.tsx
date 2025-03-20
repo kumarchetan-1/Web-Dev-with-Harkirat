@@ -1,11 +1,13 @@
 import axios from "axios";
+import { BACKEND_URL } from "../../tsconfig";
 
-async function getRoom(slug:string) {
-    axios.get()
+async function getRoomId(slug:string) {
+   const response = await axios.get(`${BACKEND_URL}/room/${slug}`)
+   return response.data.room.id()
 }
 
 
-export default function ChatRom({
+export default async function ChatRom({
     params
 }: {
     params: {
@@ -13,5 +15,6 @@ export default function ChatRom({
     }
 }
 ) {
-    const slug = params.slug
+    const slug = await(params).slug;
+    const roomId = getRoomId(slug)
 }
