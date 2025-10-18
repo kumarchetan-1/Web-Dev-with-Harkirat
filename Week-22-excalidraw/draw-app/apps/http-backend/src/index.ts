@@ -6,7 +6,7 @@ import { prismaClient } from "@repo/db/client"
 import bcrypt, { hash } from "bcrypt"
 import { middleware } from "./middlewares"
 
-const app = express()
+const app = express() 
 app.use(express.json())
 
 app.post("/signup", async (req, res) => {
@@ -42,45 +42,45 @@ app.post("/signup", async (req, res) => {
 app.post("/signin", async (req, res) => {
     try {
         const parsedData = SigninSchema.safeParse(req.body)
-    if (!parsedData.success) {
-        res.status(400).json({
-            success: false,
-            message: "Incorrect inputs"
-        })
-        return
-    }
-    const { username, password } = parsedData.data;
-
-    const existingUser = await prismaClient.user.findUnique({ 
-        where: {
-            email: username
+        if (!parsedData.success) {
+            res.status(400).json({
+                success: false,
+                message: "Incorrect inputs"
+            })
+            return
         }
-    })
+        const { username, password } = parsedData.data;
 
-    if (!existingUser) {
-        res.status(401).json({
-            success: false,
-            message: "Unauthorized: Incorrect password"
+        const existingUser = await prismaClient.user.findUnique({
+            where: {
+                email: username
+            }
         })
-        return
-    }
 
-    const isPasswordCorrect = await bcrypt.compare(password, existingUser?.password)
-    if (!isPasswordCorrect) {
-         res.status(401).json({ message: "Incorrect Password"})
-         return
-    }
+        if (!existingUser) {
+            res.status(401).json({
+                success: false,
+                message: "Unauthorized: Incorrect password"
+            })
+            return
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(password, existingUser?.password)
+        if (!isPasswordCorrect) {
+            res.status(401).json({ message: "Incorrect Password" })
+            return
+        }
         const token = jwt.sign({ userId: existingUser?.id }, JWT_SECRET)
 
         res.status(200).json({
-            success: true, 
+            success: true,
             message: "Login successful",
             token
         })
     } catch (error) {
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
-            error 
+            error
         })
     }
 
@@ -97,7 +97,7 @@ app.post("/room", middleware, async (req, res) => {
 
     const userId = req.userId
     if (!userId) {
-        throw new Error("adminId is required"); 
+        throw new Error("adminId is required");
     }
 
     try {
@@ -107,7 +107,7 @@ app.post("/room", middleware, async (req, res) => {
                 adminId: userId
             }
         })
-    
+
         res.status(201).json({
             roomId: room.id
         })
@@ -119,26 +119,37 @@ app.post("/room", middleware, async (req, res) => {
 
 })
 
-app.get("/chat/:roomId", async(req, res)=>{
+app.get("/chats/:roomId", async (req, res) => {
+try {
     const roomId = Number(req.params.roomId)
-   const messages = await prismaClient.chat.findMany({
+    console.log(req.params.roomId);
+    const messages = await prismaClient.chat.findMany({
         where: {
             roomId: roomId
         },
         orderBy: {
             id: 'desc'
         },
-        take: 50
+        take: 100
     })
 
     res.json({
         messages
     })
+} catch (error) {
+    console.log(error);
+
+    res.json({
+        messages: []
+    })
+    
+}
 })
 
-app.get("/chat/:slug", async(req, res)=>{
+app.get("/room/:slug", async (req, res) => {
+try {
     const slug = req.params.slug
-   const room = await prismaClient.room.findMany({
+    const room = await prismaClient.room.findFirst({
         where: {
             slug
         }
@@ -147,6 +158,14 @@ app.get("/chat/:slug", async(req, res)=>{
     res.json({
         room
     })
+} catch (error) {
+    console.log(error);
+
+    res.json({
+        message: "error in /room/slug endpoint"
+    })
+    
+}
 })
 
 app.listen(3001)

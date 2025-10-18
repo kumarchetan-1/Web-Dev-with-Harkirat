@@ -64,18 +64,19 @@ wss.on("connection", function connection(ws, request) {
         }
 
         if (parsedData.type === "leave_room") {
-            const user = users.find(x => x.ws === ws)
+            const user = users.find(x => x.ws === ws) 
             if (!user) {
                 return
             }
-            user.rooms = user?.rooms.filter(x => x === parsedData.roomId)
+            user.rooms = user?.rooms.filter(x => x !== parsedData.roomId)
         }
 
         if (parsedData.type === "chat") {
             const roomId = parsedData.roomId
-            const message = parsedData.message
-            // Todo, add multiple checks here to prevent malicious information, whitespaces, etc.
 
+           try {
+            // Todo, add multiple checks here to prevent malicious information, whitespaces, etc.
+            const message = parsedData.message.trim()
             await prismaClient.chat.create({
                 data: {
                     message,
@@ -93,6 +94,15 @@ wss.on("connection", function connection(ws, request) {
                     }))
                 }
             })
+           } catch (error) {
+            users.forEach((user)=>{
+                user.ws.send(JSON.stringify({
+                  type: "error",
+                  error: error,
+                  message: null
+                }))
+            })
+           }
         }
     })
 

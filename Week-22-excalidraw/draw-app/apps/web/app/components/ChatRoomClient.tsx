@@ -4,16 +4,13 @@ import { useEffect, useState } from "react"
 import { useSocket } from "../hooks/useSocket"
 
 
-export function ChatRoomClient({messages, id}:{
-    messages: {message: string}[],
-    id: string
-}) {
+export function ChatRoomClient({id, messages}:{ messages: { message: string }[], id: string }) {
     const [chats, setChats] = useState(messages)
     const [currentmessage, setCurrentMessage] = useState("")
     const {socket, loading} = useSocket()
 
     useEffect(()=>{
-     if (socket && loading) {
+     if (socket && !loading) {
 
         socket.send(JSON.stringify({
          type: "join_room",
@@ -30,14 +27,10 @@ export function ChatRoomClient({messages, id}:{
     }, [socket, loading, id])
 
 
-    return <div>
-        { chats.map( m => <div> {m.message} </div>)}
+    return <div >
+        { chats.slice().reverse().map( (m, index) => <div key={index}> { m.message } </div>) }
 
-        <input value={currentmessage} onChange={(e)=>{
-         setCurrentMessage(e.target.value)
-        }}
-        type="text" />
-
+        <input value={ currentmessage } onChange={(e)=> { setCurrentMessage(e.target.value) }} type="text" />
         <button onClick={()=>{
             socket?.send(JSON.stringify({
                 type: "chat",

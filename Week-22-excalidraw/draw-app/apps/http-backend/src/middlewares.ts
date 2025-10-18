@@ -12,8 +12,8 @@ declare global{
 
 
 export function middleware(req: Request, res: Response, next: NextFunction){
-    const token = req.headers['authorization'] ?? ""
-
+    const authHeader =  req.headers['authorization'] ?? "" // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNzE3N2RkZC0zYWJjLTQ0OGEtOGQyYS0wYzcwMWJlMGVkM2MiLCJpYXQiOjE3NDI2NzE2MjV9.ku5E2Pxqc7pEM5DTD-T6UnES8kpzImvEPKXi4pd0LBY" 
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNzE3N2RkZC0zYWJjLTQ0OGEtOGQyYS0wYzcwMWJlMGVkM2MiLCJpYXQiOjE3NDMwMzg1ODd9.yxxsVHdzVBzMrheDxA7cqWi99XysRdfzQUcSEMBvfcA" // authHeader.split(" ")[1]
     if(!token){
         res.status(403).json({ message: "Unauthorised" })
         return
